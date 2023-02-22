@@ -1,0 +1,36 @@
+version: '3.9'
+
+services:
+  web:
+    build: .
+    command: gunicorn django_base.wsgi -b 0.0.0.0:8000
+    volumes:
+      - .:/code
+    ports:
+      - 8000:8000
+    depends_on:
+      - db
+    environment:
+      - "DJANGO_CSRF_COOKIE_SECURE=False"
+      - "DJANGO_DEBUG=True"
+      - "DJANGO_DEFAULT_FROM_EMAIL=noreply@example.com"
+      - "DJANGO_EMAIL_HOST=smtp.gmail.com"
+      - "DJANGO_EMAIL_PORT=587"
+      - "DJANGO_EMAIL_HOST_USER=test.user@gmail.com"  #TODO: Override this in, e.g., docker-compose.override.yml
+      - "DJANGO_EMAIL_HOST_PASSWORD=testpass123"  #TODO: Override this in, e.g., docker-compose.override.yml
+      - "DJANGO_SECRET_KEY=django-insecure-hs+5#s^jxrj_ndu0@9$&1z8g$h9=iaq==6pz8#-5395a1lqqdf"
+      - "DJANGO_SECURE_HSTS_INCLUDE_SUBDOMAINS=False"
+      - "DJANGO_SECURE_HSTS_PRELOAD=False"
+      - "DJANGO_SECURE_HSTS_SECONDS=0"
+      - "DJANGO_SECURE_SSL_REDIRECT=False"
+      - "DJANGO_SESSION_COOKIE_SECURE=False"
+      
+  db:
+    image: postgres:15
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    environment:
+      - "POSTGRES_HOST_AUTH_METHOD=trust"
+
+volumes:
+  postgres_data:
